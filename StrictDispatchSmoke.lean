@@ -24,54 +24,126 @@ axiom block15 (j : Fin 50) : primes ⟨750 + j.1, by omega⟩ < primes ⟨750 + 
 axiom block16 (j : Fin 50) : primes ⟨800 + j.1, by omega⟩ < primes ⟨800 + j.1 + 1, by omega⟩
 axiom block17 (j : Fin 50) : primes ⟨850 + j.1, by omega⟩ < primes ⟨850 + j.1 + 1, by omega⟩
 axiom block18 (j : Fin 50) : primes ⟨900 + j.1, by omega⟩ < primes ⟨900 + j.1 + 1, by omega⟩
-axiom block19 (j : Fin 50) (hj : j.1 < 49) : primes ⟨950 + j.1, by omega⟩ < primes ⟨950 + j.1 + 1, by omega⟩
+axiom block19 (j : Fin 49) : primes ⟨950 + j.1, by omega⟩ < primes ⟨950 + j.1 + 1, by omega⟩
 
 example : StrictMono primes := by
   rw [Fin.strictMono_iff_lt_succ]
   intro i
-  let b : Fin 20 := ⟨i.1 / 50, by
-    have hi := i.isLt
-    omega⟩
-  let j : Fin 50 := ⟨i.1 % 50, Nat.mod_lt _ (by norm_num)⟩
-  have hval : 50 * b.1 + j.1 = i.1 := by
-    dsimp [b, j]
-    omega
-  have hleft : (⟨50 * b.1 + j.1, by
-      have hb := b.isLt
-      have hj := j.isLt
-      omega⟩ : Fin 1000) = i.castSucc := by
-    apply Fin.ext
-    exact hval
-  have hright : (⟨50 * b.1 + j.1 + 1, by
-      have hb := b.isLt
-      have hj := j.isLt
-      omega⟩ : Fin 1000) = i.succ := by
-    apply Fin.ext
-    simpa [hval]
-  rw [← hleft, ← hright]
-  fin_cases b
-  · simpa using block0 j
-  · simpa using block1 j
-  · simpa using block2 j
-  · simpa using block3 j
-  · simpa using block4 j
-  · simpa using block5 j
-  · simpa using block6 j
-  · simpa using block7 j
-  · simpa using block8 j
-  · simpa using block9 j
-  · simpa using block10 j
-  · simpa using block11 j
-  · simpa using block12 j
-  · simpa using block13 j
-  · simpa using block14 j
-  · simpa using block15 j
-  · simpa using block16 j
-  · simpa using block17 j
-  · simpa using block18 j
-  · have hj19 : j.1 < 49 := by
-      have hi := i.isLt
-      omega
-    simpa using block19 j hj19
+  change primes ⟨i.1, by omega⟩ < primes ⟨i.1 + 1, by omega⟩
+  by_cases h0 : i.1 < 50
+  · simpa using block0 ⟨i.1, h0⟩
+  by_cases h1 : i.1 < 100
+  · let j : Fin 50 := ⟨i.1 - 50, by omega⟩
+    have h := block1 j
+    have heq : 50 + j.1 = i.1 := by dsimp [j]; omega
+    rw [heq] at h
+    exact h
+  by_cases h2 : i.1 < 150
+  · let j : Fin 50 := ⟨i.1 - 100, by omega⟩
+    have h := block2 j
+    have heq : 100 + j.1 = i.1 := by dsimp [j]; omega
+    rw [heq] at h
+    exact h
+  by_cases h3 : i.1 < 200
+  · let j : Fin 50 := ⟨i.1 - 150, by omega⟩
+    have h := block3 j
+    have heq : 150 + j.1 = i.1 := by dsimp [j]; omega
+    rw [heq] at h
+    exact h
+  by_cases h4 : i.1 < 250
+  · let j : Fin 50 := ⟨i.1 - 200, by omega⟩
+    have h := block4 j
+    have heq : 200 + j.1 = i.1 := by dsimp [j]; omega
+    rw [heq] at h
+    exact h
+  by_cases h5 : i.1 < 300
+  · let j : Fin 50 := ⟨i.1 - 250, by omega⟩
+    have h := block5 j
+    have heq : 250 + j.1 = i.1 := by dsimp [j]; omega
+    rw [heq] at h
+    exact h
+  by_cases h6 : i.1 < 350
+  · let j : Fin 50 := ⟨i.1 - 300, by omega⟩
+    have h := block6 j
+    have heq : 300 + j.1 = i.1 := by dsimp [j]; omega
+    rw [heq] at h
+    exact h
+  by_cases h7 : i.1 < 400
+  · let j : Fin 50 := ⟨i.1 - 350, by omega⟩
+    have h := block7 j
+    have heq : 350 + j.1 = i.1 := by dsimp [j]; omega
+    rw [heq] at h
+    exact h
+  by_cases h8 : i.1 < 450
+  · let j : Fin 50 := ⟨i.1 - 400, by omega⟩
+    have h := block8 j
+    have heq : 400 + j.1 = i.1 := by dsimp [j]; omega
+    rw [heq] at h
+    exact h
+  by_cases h9 : i.1 < 500
+  · let j : Fin 50 := ⟨i.1 - 450, by omega⟩
+    have h := block9 j
+    have heq : 450 + j.1 = i.1 := by dsimp [j]; omega
+    rw [heq] at h
+    exact h
+  by_cases h10 : i.1 < 550
+  · let j : Fin 50 := ⟨i.1 - 500, by omega⟩
+    have h := block10 j
+    have heq : 500 + j.1 = i.1 := by dsimp [j]; omega
+    rw [heq] at h
+    exact h
+  by_cases h11 : i.1 < 600
+  · let j : Fin 50 := ⟨i.1 - 550, by omega⟩
+    have h := block11 j
+    have heq : 550 + j.1 = i.1 := by dsimp [j]; omega
+    rw [heq] at h
+    exact h
+  by_cases h12 : i.1 < 650
+  · let j : Fin 50 := ⟨i.1 - 600, by omega⟩
+    have h := block12 j
+    have heq : 600 + j.1 = i.1 := by dsimp [j]; omega
+    rw [heq] at h
+    exact h
+  by_cases h13 : i.1 < 700
+  · let j : Fin 50 := ⟨i.1 - 650, by omega⟩
+    have h := block13 j
+    have heq : 650 + j.1 = i.1 := by dsimp [j]; omega
+    rw [heq] at h
+    exact h
+  by_cases h14 : i.1 < 750
+  · let j : Fin 50 := ⟨i.1 - 700, by omega⟩
+    have h := block14 j
+    have heq : 700 + j.1 = i.1 := by dsimp [j]; omega
+    rw [heq] at h
+    exact h
+  by_cases h15 : i.1 < 800
+  · let j : Fin 50 := ⟨i.1 - 750, by omega⟩
+    have h := block15 j
+    have heq : 750 + j.1 = i.1 := by dsimp [j]; omega
+    rw [heq] at h
+    exact h
+  by_cases h16 : i.1 < 850
+  · let j : Fin 50 := ⟨i.1 - 800, by omega⟩
+    have h := block16 j
+    have heq : 800 + j.1 = i.1 := by dsimp [j]; omega
+    rw [heq] at h
+    exact h
+  by_cases h17 : i.1 < 900
+  · let j : Fin 50 := ⟨i.1 - 850, by omega⟩
+    have h := block17 j
+    have heq : 850 + j.1 = i.1 := by dsimp [j]; omega
+    rw [heq] at h
+    exact h
+  by_cases h18 : i.1 < 950
+  · let j : Fin 50 := ⟨i.1 - 900, by omega⟩
+    have h := block18 j
+    have heq : 900 + j.1 = i.1 := by dsimp [j]; omega
+    rw [heq] at h
+    exact h
+  · let j : Fin 49 := ⟨i.1 - 950, by omega⟩
+    have h := block19 j
+    have heq : 950 + j.1 = i.1 := by dsimp [j]; omega
+    rw [heq] at h
+    exact h
 
 end Jsp001007
