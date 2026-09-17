@@ -23,5 +23,5 @@ jobs:
         run: lake exe cache get
       - name: Build prime table only
         run: lake build Jsp001007Lean.PrimeData
-      - name: Benchmark strict monotonicity with decide
-        run: lake env lean StrictDecideSmoke.lean
+      - name: Check chunked strict monotonicity dispatch
+        run: lake env lean StrictDispatchSmoke.lean
