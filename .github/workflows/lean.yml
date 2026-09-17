@@ -39,11 +39,13 @@ jobs:
         run: lake exe cache get
       - name: Build kernel certificate shards
         run: lake build ${{ matrix.targets }}
-      - name: Upload compiled Lean certificates
+      - name: Upload complete Lake shard outputs
         uses: actions/upload-artifact@v4
         with:
           name: lean-shards-${{ matrix.group }}
-          path: .lake/build/lib/lean/Jsp001007Lean
+          path: |
+            .lake/build/lib/lean/Jsp001007Lean
+            .lake/build/ir/Jsp001007Lean
           if-no-files-found: error
           retention-days: 7
 
@@ -61,11 +63,11 @@ jobs:
         run: lake update
       - name: Fetch Mathlib cache
         run: lake exe cache get
-      - name: Restore compiled Lean certificates
+      - name: Restore complete Lake shard outputs
         uses: actions/download-artifact@v4
         with:
           pattern: lean-shards-*
-          path: .lake/build/lib/lean/Jsp001007Lean
+          path: .lake/build
           merge-multiple: true
       - name: Complete lake build
         run: lake build
