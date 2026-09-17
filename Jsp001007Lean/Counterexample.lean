@@ -36,6 +36,7 @@ namespace Jsp001007
 
 open Function
 set_option maxRecDepth 1000000
+set_option maxHeartbeats 0
 
 def N0 : ℕ := 100_000
 def T0 : ℕ := 10_001
