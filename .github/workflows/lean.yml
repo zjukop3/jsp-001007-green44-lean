@@ -11,22 +11,12 @@ concurrency:
 
 jobs:
   shards:
-    name: Prime certificate shards ${{ matrix.group }}
+    name: Prime certificate shard ${{ matrix.shard }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - group: 0-3
-            targets: "Jsp001007Lean.PrimeShard0 Jsp001007Lean.PrimeShard1 Jsp001007Lean.PrimeShard2 Jsp001007Lean.PrimeShard3"
-          - group: 4-7
-            targets: "Jsp001007Lean.PrimeShard4 Jsp001007Lean.PrimeShard5 Jsp001007Lean.PrimeShard6 Jsp001007Lean.PrimeShard7"
-          - group: 8-11
-            targets: "Jsp001007Lean.PrimeShard8 Jsp001007Lean.PrimeShard9 Jsp001007Lean.PrimeShard10 Jsp001007Lean.PrimeShard11"
-          - group: 12-15
-            targets: "Jsp001007Lean.PrimeShard12 Jsp001007Lean.PrimeShard13 Jsp001007Lean.PrimeShard14 Jsp001007Lean.PrimeShard15"
-          - group: 16-19
-            targets: "Jsp001007Lean.PrimeShard16 Jsp001007Lean.PrimeShard17 Jsp001007Lean.PrimeShard18 Jsp001007Lean.PrimeShard19"
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
     steps:
       - uses: actions/checkout@v4
       - name: Install Elan and Lean
@@ -37,12 +27,12 @@ jobs:
         run: lake update
       - name: Fetch Mathlib cache
         run: lake exe cache get
-      - name: Build kernel certificate shards
-        run: lake build ${{ matrix.targets }}
-      - name: Upload complete Lake shard outputs
+      - name: Build kernel certificate shard
+        run: lake build Jsp001007Lean.PrimeShard${{ matrix.shard }}
+      - name: Upload complete Lake shard output
         uses: actions/upload-artifact@v4
         with:
-          name: lean-shards-${{ matrix.group }}
+          name: lean-shard-${{ matrix.shard }}
           path: |
             .lake/build/lib/lean/Jsp001007Lean
             .lake/build/ir/Jsp001007Lean
@@ -66,7 +56,7 @@ jobs:
       - name: Restore kernel certificate shards
         uses: actions/download-artifact@v4
         with:
-          pattern: lean-shards-*
+          pattern: lean-shard-*
           path: .lake/build
           merge-multiple: true
       - name: Build counterexample theorem
