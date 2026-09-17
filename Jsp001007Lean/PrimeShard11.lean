@@ -1,6 +1,9 @@
 import Jsp001007Lean.PrimeData
+
 namespace Jsp001007
-set_option maxRecDepth 1000000
-set_option maxHeartbeats 0 in
-theorem primeChunk11_all_prime : ∀ p : ↥primeChunk11, Nat.Prime p.1 := by decide
+
+theorem primes_prime_block11 (j : Fin 50) :
+    Nat.Prime (primes ⟨550 + j.1, by omega⟩) := by
+  fin_cases j <;> norm_num [primes]
+
 end Jsp001007

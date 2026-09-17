@@ -23,8 +23,8 @@ import Jsp001007Lean.PrimeShard19
 /-!
 # JSP-001007 / Green Problem 44: explicit negative certificate
 
-This file proves a direct counterexample to the exact right-hand side of
-`FormalConjectures/GreensOpenProblems/44.lean`.
+This file proves a direct counterexample to the fixed 1000-prime Green Problem 44
+statement used by Formal Conjectures.
 
 Witness: `N = 100,000`; 1000 increasing prime moduli from `20,011` to
 `30,161`; modulo each prime `p`, remove the upper half of the standard
@@ -41,52 +41,66 @@ set_option maxHeartbeats 0
 def N0 : ℕ := 100_000
 def T0 : ℕ := 10_001
 
-theorem primeSet_all_prime (p : ↥primeSet) : Nat.Prime p.1 := by
-  rcases primeSet_chunk_cover p with h0 | h1 | h2 | h3 | h4 | h5 | h6 | h7 | h8 | h9 | h10 | h11 | h12 | h13 | h14 | h15 | h16 | h17 | h18 | h19
-  · exact primeChunk0_all_prime ⟨p.1, h0⟩
-  · exact primeChunk1_all_prime ⟨p.1, h1⟩
-  · exact primeChunk2_all_prime ⟨p.1, h2⟩
-  · exact primeChunk3_all_prime ⟨p.1, h3⟩
-  · exact primeChunk4_all_prime ⟨p.1, h4⟩
-  · exact primeChunk5_all_prime ⟨p.1, h5⟩
-  · exact primeChunk6_all_prime ⟨p.1, h6⟩
-  · exact primeChunk7_all_prime ⟨p.1, h7⟩
-  · exact primeChunk8_all_prime ⟨p.1, h8⟩
-  · exact primeChunk9_all_prime ⟨p.1, h9⟩
-  · exact primeChunk10_all_prime ⟨p.1, h10⟩
-  · exact primeChunk11_all_prime ⟨p.1, h11⟩
-  · exact primeChunk12_all_prime ⟨p.1, h12⟩
-  · exact primeChunk13_all_prime ⟨p.1, h13⟩
-  · exact primeChunk14_all_prime ⟨p.1, h14⟩
-  · exact primeChunk15_all_prime ⟨p.1, h15⟩
-  · exact primeChunk16_all_prime ⟨p.1, h16⟩
-  · exact primeChunk17_all_prime ⟨p.1, h17⟩
-  · exact primeChunk18_all_prime ⟨p.1, h18⟩
-  · exact primeChunk19_all_prime ⟨p.1, h19⟩
+def primeBlock (i : Fin 1000) : Fin 20 :=
+  ⟨i.1 / 50, by
+    have hi := i.isLt
+    omega⟩
 
-def primeEmb : Fin 1000 ↪o ℕ :=
-  primeSet.orderEmbOfFin primeSet_card
+def primeOffset (i : Fin 1000) : Fin 50 :=
+  ⟨i.1 % 50, by
+    exact Nat.mod_lt _ (by norm_num)⟩
 
-def primes (i : Fin 1000) : ℕ := primeEmb i
+lemma prime_index_decomp (i : Fin 1000) :
+    50 * (primeBlock i).1 + (primeOffset i).1 = i.1 := by
+  dsimp [primeBlock, primeOffset]
+  omega
 
-theorem primes_mem (i : Fin 1000) : primes i ∈ primeSet := by
-  simpa [primes, primeEmb] using
-    (Finset.orderEmbOfFin_mem primeSet primeSet_card i)
+theorem primes_prime (i : Fin 1000) : Nat.Prime (primes i) := by
+  let b := primeBlock i
+  let j := primeOffset i
+  have hidx : (⟨50 * b.1 + j.1, by
+      have hb := b.isLt
+      have hj := j.isLt
+      omega⟩ : Fin 1000) = i := by
+    apply Fin.ext
+    simpa [b, j] using prime_index_decomp i
+  rw [← hidx]
+  fin_cases b
+  · simpa using primes_prime_block0 j
+  · simpa using primes_prime_block1 j
+  · simpa using primes_prime_block2 j
+  · simpa using primes_prime_block3 j
+  · simpa using primes_prime_block4 j
+  · simpa using primes_prime_block5 j
+  · simpa using primes_prime_block6 j
+  · simpa using primes_prime_block7 j
+  · simpa using primes_prime_block8 j
+  · simpa using primes_prime_block9 j
+  · simpa using primes_prime_block10 j
+  · simpa using primes_prime_block11 j
+  · simpa using primes_prime_block12 j
+  · simpa using primes_prime_block13 j
+  · simpa using primes_prime_block14 j
+  · simpa using primes_prime_block15 j
+  · simpa using primes_prime_block16 j
+  · simpa using primes_prime_block17 j
+  · simpa using primes_prime_block18 j
+  · simpa using primes_prime_block19 j
 
-theorem primes_prime (i : Fin 1000) : Nat.Prime (primes i) :=
-  primeSet_all_prime ⟨primes i, primes_mem i⟩
+theorem primes_strictMono : StrictMono primes := by
+  rw [Fin.strictMono_iff_lt_succ]
+  intro i
+  fin_cases i <;> norm_num [primes]
 
-theorem primes_strictMono : StrictMono primes :=
-  primeEmb.strictMono
-
-theorem primes_bounds (i : Fin 1000) : 20_011 ≤ primes i ∧ primes i ≤ 30_161 :=
-  primeSet_bounds_cert ⟨primes i, primes_mem i⟩
+theorem primes_bounds (i : Fin 1000) : 20_011 ≤ primes i ∧ primes i ≤ 30_161 := by
+  constructor
+  · have h := primes_strictMono.monotone (Fin.zero_le i)
+    simpa [primes] using h
+  · have h := primes_strictMono.monotone (Fin.le_last i)
+    simpa [primes] using h
 
 theorem primes_power_bound : (primes 999) ^ 10 < N0 ^ 9 := by
-  have hu : primes 999 ≤ 30_161 := (primes_bounds 999).2
-  calc
-    (primes 999) ^ 10 ≤ 30_161 ^ 10 := Nat.pow_le_pow_left hu 10
-    _ < N0 ^ 9 := by norm_num [N0]
+  norm_num [primes, N0]
 
 def removedClasses (i : Fin 1000) : Finset (ZMod (primes i)) :=
   (Finset.Ico ((primes i + 1) / 2) (primes i)).image
