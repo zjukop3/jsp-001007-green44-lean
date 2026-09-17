@@ -1,7 +1,13 @@
 name: Lean
 
 on:
+  push:
+  pull_request:
   workflow_dispatch:
+
+concurrency:
+  group: lean-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -18,3 +24,11 @@ jobs:
         run: lake exe cache get
       - name: Build
         run: lake build
+      - name: Axiom audit
+        run: lake env lean AxiomAudit.lean
+      - name: Source trust scan
+        run: |
+          if grep -R -n -E '(^|[^[:alnum:]_])(sorry|admit|native_decide)([^[:alnum:]_]|$)' Jsp001007Lean AxiomAudit.lean; then
+            echo "Forbidden proof shortcut found"
+            exit 1
+          fi
