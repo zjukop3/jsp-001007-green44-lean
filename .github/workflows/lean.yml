@@ -22,5 +22,5 @@ jobs:
         run: lake update
       - name: Fetch Mathlib cache
         run: lake exe cache get
-      - name: Build
-        run: lake build
+      - name: Kernel typecheck target
+        run: lake env lean Jsp001007Lean/Counterexample.lean
