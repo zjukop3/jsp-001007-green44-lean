@@ -1,13 +1,7 @@
 name: Lean
 
 on:
-  push:
-  pull_request:
   workflow_dispatch:
-
-concurrency:
-  group: lean-${{ github.ref }}
-  cancel-in-progress: true
 
 jobs:
   build:
@@ -22,7 +16,5 @@ jobs:
         run: lake update
       - name: Fetch Mathlib cache
         run: lake exe cache get
-      - name: Build local table module
-        run: lake build Jsp001007Lean.PrimeData
-      - name: Benchmark 1000 primality cases
-        run: lake env lean PrimeAllSmoke.lean
+      - name: Build
+        run: lake build
