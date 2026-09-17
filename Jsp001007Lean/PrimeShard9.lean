@@ -2,6 +2,7 @@ import Jsp001007Lean.PrimeData
 
 namespace Jsp001007
 set_option maxRecDepth 1000000
+set_option maxHeartbeats 0
 
 theorem primes_prime_block9 (j : Fin 50) :
     Nat.Prime (primes ⟨450 + j.1, by omega⟩) := by

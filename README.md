@@ -7,13 +7,13 @@ This project targets **JSP-001007** / Ben Green's Problem 44.
 It gives an explicit negative certificate for the exact universal statement used by
 Google DeepMind's Formal Conjectures formalization of Green Problem 44.
 
-- `N = 5,000,000`.
+- `N = 100,000`.
 - `p : Fin 1000 -> Nat` is the explicit increasing list of 1000 primes from
-  `1,000,003` through `1,013,501`.
+  `20,011` through `30,161`.
 - For each `p`, remove the upper half of the standard residue representatives:
   `[(p+1)/2, p)`.
-- Every integer `1 <= x <= 500,001` survives every sieve.
-- Therefore at least `500,001 > N/10` integers remain.
+- Every integer `1 <= x <= 10,001` survives every sieve.
+- Therefore at least `10,001 > N/10` integers remain.
 
 Top-level theorem:
 
