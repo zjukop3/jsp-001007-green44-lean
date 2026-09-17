@@ -23,4 +23,4 @@ jobs:
       - name: Fetch Mathlib cache
         run: lake exe cache get
       - name: Smoke-test one norm_num shard
-        run: lake env lean Jsp001007Lean/PrimeShard0.lean
+        run: lake build Jsp001007Lean.PrimeShard0
