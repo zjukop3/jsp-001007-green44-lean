@@ -20,9 +20,12 @@ namespace Jsp001007
 
 open Function
 
+set_option maxRecDepth 1000000
+
 def N0 : ℕ := 5_000_000
 def T0 : ℕ := 500_001
 
+set_option maxRecDepth 1000000 in
 def primes : Fin 1000 → ℕ := ![
   1000003,
   1000033,
@@ -1026,16 +1029,15 @@ def primes : Fin 1000 → ℕ := ![
   1013501
 ]
 
+set_option maxRecDepth 1000000 in
 set_option maxHeartbeats 0 in
 theorem primes_prime : ∀ i, Nat.Prime (primes i) := by
-  intro i
-  fin_cases i <;> norm_num [primes]
+  native_decide
 
+set_option maxRecDepth 1000000 in
 set_option maxHeartbeats 0 in
 theorem primes_strictMono : StrictMono primes := by
-  rw [Fin.strictMono_iff_lt_succ]
-  intro i
-  fin_cases i <;> norm_num [primes]
+  native_decide
 
 theorem primes_min (i : Fin 1000) : 1_000_003 ≤ primes i := by
   have hmono := primes_strictMono.monotone
