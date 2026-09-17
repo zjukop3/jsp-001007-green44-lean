@@ -39,7 +39,7 @@ jobs:
         run: lake exe cache get
       - name: Build kernel certificate shards
         run: lake build ${{ matrix.targets }}
-      - name: Upload complete Lake shard outputs
+      - name: Upload shard outputs
         uses: actions/upload-artifact@v4
         with:
           name: lean-shards-${{ matrix.group }}
@@ -49,8 +49,8 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-  verify:
-    name: Full proof and audits
+  prime_facts:
+    name: Assemble primality facts
     needs: shards
     runs-on: ubuntu-latest
     steps:
@@ -59,18 +59,103 @@ jobs:
         run: |
           curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
-      - name: Generate Lake manifest
-        run: lake update
-      - name: Fetch Mathlib cache
-        run: lake exe cache get
-      - name: Restore complete Lake shard outputs
+      - run: lake update
+      - run: lake exe cache get
+      - name: Restore shard outputs
         uses: actions/download-artifact@v4
         with:
           pattern: lean-shards-*
           path: .lake/build
           merge-multiple: true
-      - name: Complete lake build
-        run: lake build
+      - name: Build PrimeFacts
+        run: lake build Jsp001007Lean.PrimeFacts
+      - name: Upload PrimeFacts closure
+        uses: actions/upload-artifact@v4
+        with:
+          name: lean-prime-facts
+          path: |
+            .lake/build/lib/lean/Jsp001007Lean
+            .lake/build/ir/Jsp001007Lean
+          if-no-files-found: error
+          retention-days: 7
+
+  prime_order:
+    name: Verify prime order and bounds
+    needs: prime_facts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Elan and Lean
+        run: |
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - run: lake update
+      - run: lake exe cache get
+      - name: Restore PrimeFacts closure
+        uses: actions/download-artifact@v4
+        with:
+          name: lean-prime-facts
+          path: .lake/build
+      - name: Build PrimeOrder
+        run: lake build Jsp001007Lean.PrimeOrder
+      - name: Upload PrimeOrder closure
+        uses: actions/upload-artifact@v4
+        with:
+          name: lean-prime-order
+          path: |
+            .lake/build/lib/lean/Jsp001007Lean
+            .lake/build/ir/Jsp001007Lean
+          if-no-files-found: error
+          retention-days: 7
+
+  sieve:
+    name: Verify sieve certificate
+    needs: prime_order
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Elan and Lean
+        run: |
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - run: lake update
+      - run: lake exe cache get
+      - name: Restore PrimeOrder closure
+        uses: actions/download-artifact@v4
+        with:
+          name: lean-prime-order
+          path: .lake/build
+      - name: Build Sieve
+        run: lake build Jsp001007Lean.Sieve
+      - name: Upload Sieve closure
+        uses: actions/upload-artifact@v4
+        with:
+          name: lean-sieve
+          path: |
+            .lake/build/lib/lean/Jsp001007Lean
+            .lake/build/ir/Jsp001007Lean
+          if-no-files-found: error
+          retention-days: 7
+
+  verify:
+    name: Final theorem and audits
+    needs: sieve
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Elan and Lean
+        run: |
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - run: lake update
+      - run: lake exe cache get
+      - name: Restore Sieve closure
+        uses: actions/download-artifact@v4
+        with:
+          name: lean-sieve
+          path: .lake/build
+      - name: Build counterexample theorem
+        run: lake build Jsp001007Lean.Counterexample
       - name: Axiom audit
         run: lake env lean AxiomAudit.lean
       - name: Source trust scan
