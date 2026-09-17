@@ -22,5 +22,7 @@ jobs:
         run: lake update
       - name: Fetch Mathlib cache
         run: lake exe cache get
+      - name: Build local table module
+        run: lake build Jsp001007Lean.PrimeData
       - name: Benchmark 999 adjacent inequalities
         run: lake env lean StructSmoke.lean
