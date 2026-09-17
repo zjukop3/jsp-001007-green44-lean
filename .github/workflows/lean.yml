@@ -10,7 +10,46 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  shards:
+    name: Prime certificate shards ${{ matrix.group }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - group: 0-3
+            targets: "Jsp001007Lean.PrimeShard0 Jsp001007Lean.PrimeShard1 Jsp001007Lean.PrimeShard2 Jsp001007Lean.PrimeShard3"
+          - group: 4-7
+            targets: "Jsp001007Lean.PrimeShard4 Jsp001007Lean.PrimeShard5 Jsp001007Lean.PrimeShard6 Jsp001007Lean.PrimeShard7"
+          - group: 8-11
+            targets: "Jsp001007Lean.PrimeShard8 Jsp001007Lean.PrimeShard9 Jsp001007Lean.PrimeShard10 Jsp001007Lean.PrimeShard11"
+          - group: 12-15
+            targets: "Jsp001007Lean.PrimeShard12 Jsp001007Lean.PrimeShard13 Jsp001007Lean.PrimeShard14 Jsp001007Lean.PrimeShard15"
+          - group: 16-19
+            targets: "Jsp001007Lean.PrimeShard16 Jsp001007Lean.PrimeShard17 Jsp001007Lean.PrimeShard18 Jsp001007Lean.PrimeShard19"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Elan and Lean
+        run: |
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Generate Lake manifest
+        run: lake update
+      - name: Fetch Mathlib cache
+        run: lake exe cache get
+      - name: Build kernel certificate shards
+        run: lake build ${{ matrix.targets }}
+      - name: Upload compiled Lean certificates
+        uses: actions/upload-artifact@v4
+        with:
+          name: lean-shards-${{ matrix.group }}
+          path: .lake/build/lib/lean/Jsp001007Lean
+          if-no-files-found: error
+          retention-days: 7
+
+  verify:
+    name: Full proof and audits
+    needs: shards
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,7 +61,13 @@ jobs:
         run: lake update
       - name: Fetch Mathlib cache
         run: lake exe cache get
-      - name: Build
+      - name: Restore compiled Lean certificates
+        uses: actions/download-artifact@v4
+        with:
+          pattern: lean-shards-*
+          path: .lake/build/lib/lean/Jsp001007Lean
+          merge-multiple: true
+      - name: Complete lake build
         run: lake build
       - name: Axiom audit
         run: lake env lean AxiomAudit.lean
