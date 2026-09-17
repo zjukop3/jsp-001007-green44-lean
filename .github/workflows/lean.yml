@@ -26,3 +26,5 @@ jobs:
         run: lake build Jsp001007Lean.PrimeData
       - name: Benchmark 999 adjacent inequalities
         run: lake env lean StructSmoke.lean
+      - name: Benchmark 1000 primality cases
+        run: lake env lean PrimeAllSmoke.lean
