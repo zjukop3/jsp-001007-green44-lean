@@ -22,5 +22,5 @@ jobs:
         run: lake update
       - name: Fetch Mathlib cache
         run: lake exe cache get
-      - name: Smoke-test one norm_num shard
-        run: lake build Jsp001007Lean.PrimeShard0
+      - name: Benchmark 50 norm_num primality proofs
+        run: lake env lean NormSmoke.lean
